@@ -1,0 +1,112 @@
+/* Layout and colour cues for the teaching panels. All highlights also have text. */
+.gradio-container {
+    --ink: #173431;
+    --muted: #52645f;
+    --line: #ccd7d1;
+    max-width: 1120px !important;
+    margin: auto;
+    font-family: Inter, system-ui, sans-serif;
+}
+.masthead {
+    padding: 28px 32px;
+    border-left: 6px solid #edac52;
+    border-radius: 12px;
+    background: #153e3c;
+    color: #fff;
+}
+.masthead h1, .board h2, .group h3, .board p, .masthead p { margin: 0; }
+.masthead h1 { color: #fff; font-size: clamp(28px, 4vw, 44px); line-height: 1.1; letter-spacing: -0.035em; }
+.masthead p { color: #d3e6de; margin-top: 8px; font-size: 16px; }
+#workspace { align-items: flex-start; gap: 20px; margin-top: 8px; }
+#controls, .board {
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--ink);
+}
+#controls { gap: 14px; background: #f2f6f2; }
+#controls { --block-info-text-color: #435d54; --block-info-text-color-dark: #435d54; }
+#controls .form { background: transparent; }
+#controls label, #controls label span { color: var(--ink); }
+#controls .block { border: 0; box-shadow: none; background: transparent; padding: 0; }
+#controls textarea {
+    border: 1px solid #9bb2a8;
+    background: #fff;
+    color: var(--ink);
+    font: 15px/1.65 "IBM Plex Mono", ui-monospace, monospace;
+}
+#controls .input-help { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+#controls button, #navigation button { min-height: 42px; font-weight: 650; border-radius: 8px; }
+#controls button, #navigation button.primary { background: #14605a; border-color: #14605a; color: white; }
+#controls button:hover, #navigation button.primary:hover { background: #0f4b45; }
+#navigation button:disabled { opacity: 0.5; }
+#viewer { gap: 12px; }
+#navigation { gap: 8px; }
+.board { line-height: 1.5; overflow-wrap: anywhere; }
+.board h2 { color: var(--ink); font-size: 26px; line-height: 1.2; letter-spacing: -0.025em; }
+.board .step-note, .board .decision, .board.error p, .board[role="status"] p { margin-top: 8px; }
+.progress-label, .list-label, .group h3 {
+    color: #3f6158;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.065em;
+    text-transform: uppercase;
+}
+.board progress {
+    display: block;
+    width: 100%;
+    height: 4px;
+    margin: 7px 0 20px;
+    border: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #e1e9e4;
+}
+.board progress::-webkit-progress-bar { background: #e1e9e4; }
+.board progress::-webkit-progress-value { background: #268475; }
+.board progress::-moz-progress-bar { background: #268475; }
+.halves { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.group { min-width: 0; margin-top: 18px; }
+.group h3 { margin-bottom: 7px; }
+.board ol { list-style: none; margin: 0; padding: 0; }
+.board .cards { display: flex; flex-wrap: wrap; gap: 6px; }
+.stop {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 3px 8px;
+    max-width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #cbd4d2;
+    border-radius: 7px;
+    background: #f7f9f7;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+.stop b, .count, .position { font-variant-numeric: tabular-nums; }
+.stop.left { background: #e6f2f0; border-color: #9dcac1; }
+.stop.right { background: #eeedf9; border-color: #c4bfe3; }
+.stop.marked { border: 2px solid #30695f; padding: 5px 9px; }
+.stop.right.marked { border-color: #73629e; }
+.stop.output.marked { background: #fff0d4; border-color: #ae7627; }
+.stop small { flex-basis: 100%; color: var(--ink); font-size: 11px; font-weight: 700; }
+.group .empty-group { color: var(--muted); font-style: italic; }
+.list-label, .stop-list li { display: flex; align-items: center; gap: 12px; }
+.list-label { justify-content: space-between; margin-top: 20px; }
+.stop-list li { padding: 9px 0; border-bottom: 1px solid #dce5df; }
+.stop-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+.position { min-width: 25px; color: var(--muted); font-size: 13px; }
+.stop-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.count { min-width: 30px; text-align: right; }
+.track, .track span { display: block; height: 4px; border-radius: 4px; }
+.track { background: #e8eeea; margin-top: 4px; }
+.track span { background: #408b7d; }
+.board .decision { padding: 10px 13px; border-left: 3px solid #2b8070; background: #e9f4ed; }
+.board.error { background: #fff5ec; border-color: #b87843; }
+@media (max-width: 620px) {
+    .masthead, #controls, .board { padding: 16px; }
+    #workspace { gap: 12px; }
+    #controls, #viewer { min-width: 0 !important; flex-basis: 100% !important; }
+    .halves { gap: 8px; }
+}

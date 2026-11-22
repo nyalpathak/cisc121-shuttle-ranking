@@ -7,7 +7,7 @@ sdk: gradio
 sdk_version: 6.32.0
 python_version: "3.12"
 app_file: app.py
-short_description: Step through Merge Sort to find the busiest campus shuttle stop.
+short_description: Rank campus shuttle stops one Merge Sort step at a time.
 ---
 
 # Shuttle Stop Crowd Ranking

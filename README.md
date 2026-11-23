@@ -3,10 +3,8 @@ title: Shuttle Stop Crowd Ranking
 emoji: 🚌
 colorFrom: green
 colorTo: blue
-sdk: gradio
-sdk_version: 6.32.0
-python_version: "3.12"
-app_file: app.py
+sdk: static
+app_file: index.html
 short_description: Rank campus shuttle stops one Merge Sort step at a time.
 ---
 
@@ -71,7 +69,7 @@ python -m pip install -r requirements.txt
 python app.py
 ```
 
-Open the local URL printed in Terminal. Keep Terminal open while using the app. On Windows, create the environment with `py -3.12 -m venv .venv` and activate it in PowerShell with `.\.venv\Scripts\Activate.ps1`. The last two commands are the same. The only direct dependency is Gradio 6.32.0.
+Open the local URL printed in Terminal. Keep Terminal open while using the app. On Windows, create the environment with `py -3.12 -m venv .venv` and activate it in PowerShell with `.\.venv\Scripts\Activate.ps1`. The last two commands are the same. Gradio 6.32.0 is the only direct dependency for the local app.
 
 ## Testing & Verification
 
@@ -98,18 +96,22 @@ All **17 test methods passed** on Python 3.12.14. The table gives expected and o
 
 The browser run visited all 17 sample frames. It also checked Back and Show result, recovery after the invalid count, a fresh tab with its own replay, and long names at widths of 320, 390 and 768 pixels.
 
+The single-file Gradio-Lite build also ran on its own in a fresh Chromium iframe. The browser test visited all 17 frames, checked the tie and Back button, corrected a negative count, and confirmed the changed-count, all-zero and single-stop decisions. [See the Gradio-Lite sample result](docs/05-gradio-lite.png).
+
 ## Hugging Face Link
 
-**Live Space:** Pending deployment. Replace this line with the tested Space URL before submitting.
+[Open the shuttle ranking app on Hugging Face](https://huggingface.co/spaces/nyalpathak/cisc121-shuttle-ranking) · [View the project on GitHub](https://github.com/nyalpathak/cisc121-shuttle-ranking)
 
-Private source repository on GitHub. [nyalpathak/cisc121-shuttle-ranking](https://github.com/nyalpathak/cisc121-shuttle-ranking)
+The Space uses the free Static SDK with Gradio-Lite 5.45.0. It runs the same Python functions and Gradio controls in the visitor’s browser. The first visit downloads Python and the interface, so allow a little time for the input box to appear.
 
-Publish the contents of this folder at the root of a Gradio Space. The settings at the top of this README select Python 3.12, Gradio 6.32.0, and `app.py`. Open the deployed app, step through a comparison, and check the sample result before copying its URL to OnQ.
+**To deploy or update the Space**, upload the supplied `index.html` to its top-level Files tab, replacing the starter page, and commit to `main`. The Space README must select `sdk: static`. The default entry file is `index.html`. If the Python or CSS changes, run `python build_space.py` to regenerate that file. The builder embeds the project sources and pins four compatible Python packages for the browser. Each visit needs internet access to load Gradio and Python packages.
+
+**To check a deployment**, choose **Show result** with the original sample. West Campus should come first with 32. Then edit Stauffer Library from 18 to 40, choose **Start simulation**, and choose **Show result** again. Stauffer Library should now come first with 40. A private project requires grader access on each platform.
 
 ## Author & AI Acknowledgment
 
 **Student:** Nyal, CISC 121, Queen’s University.
 
-**AI assistance:** OpenAI ChatGPT (Codex) helped select the scenario and tie rule, drafted the Python and Gradio code, wrote and ran the tests, captured screenshots from the running app, and drafted the flowchart and this README. The program records its own Merge Sort operations. The sample crowd counts are fictional.
+**AI assistance:** OpenAI ChatGPT (Codex) helped select the scenario and tie rule, drafted the Python and Gradio code, wrote and ran the tests, captured screenshots from the running app, drafted the flowchart and this README, and adapted the app for a free Gradio-Lite Space. The program records its own Merge Sort operations. The sample crowd counts are fictional.
 
-**Sources:** The course's *CISC 121 Project Guidelines*, problem 2, and the supplied *Project README template* guided the scope and structure. The interface uses Gradio session state and the deployment settings follow Hugging Face's guide. [Gradio session state](https://gradio.app/guides/state-in-blocks) · [Gradio Spaces](https://huggingface.co/docs/hub/spaces-sdks-gradio) · [Space configuration](https://huggingface.co/docs/hub/spaces-config-reference).
+**Sources:** The course's *CISC 121 Project Guidelines*, problem 2, and the supplied *Project README template* guided the scope and structure. The interface and browser deployment use Gradio, Gradio-Lite and Hugging Face Static Spaces. [Gradio session state](https://www.gradio.app/guides/state-in-blocks) · [Gradio-Lite](https://huggingface.co/blog/gradio-lite) · [Hugging Face Static Spaces](https://huggingface.co/docs/hub/spaces-sdks-static).

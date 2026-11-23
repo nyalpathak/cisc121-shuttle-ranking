@@ -30,6 +30,12 @@ The completed ranking recommends West Campus. The two equal-length bars show the
 
 The teal cards belong to the left group and the lilac cards belong to the right group. **Front** marks the candidates before the pick. Gold cards marked **Added** show what that step put into the output. A tail step can add several cards because the remaining group is already ranked. [View the first split](docs/01-split.png).
 
+### Stauffer Library at 40
+
+With the original counts, Stauffer Library ranked third with 18 people. Changing just its count to **40** moved it to first and changed the shuttle recommendation to **Stauffer Library**. West Campus and Athletics Centre both stayed at 32, in the order they were entered.
+
+![Step 16 of 16 after the edit. Stauffer Library is first with 40, followed by West Campus 32, Athletics Centre 32, and Union Street 7.](docs/06-stauffer-40.png)
+
 ## Problem Breakdown & Computational Thinking
 
 - **Decomposition.** Read each stop and count, validate the rows, split the list into halves, rank each half, and merge the halves. Use the first stop in the completed ranking to make the dispatch decision.

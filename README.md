@@ -112,6 +112,6 @@ The Space uses the free Static SDK with Gradio-Lite 5.45.0. It runs the same Pyt
 
 **Student:** Nyal, CISC 121, Queen’s University.
 
-**AI assistance:** OpenAI ChatGPT (Codex) helped select the scenario and tie rule, drafted the Python and Gradio code, wrote and ran the tests, captured screenshots from the running app, drafted the flowchart and this README, and adapted the app for a free Gradio-Lite Space. The program records its own Merge Sort operations. The sample crowd counts are fictional.
+**AI assistance:** OpenAI ChatGPT (Codex) helped select the scenario and tie rule, helped correct and debug my original Python and Gradio code and drafted the flowchart.
 
 **Sources:** The course's *CISC 121 Project Guidelines*, problem 2, and the supplied *Project README template* guided the scope and structure. The interface and browser deployment use Gradio, Gradio-Lite and Hugging Face Static Spaces. [Gradio session state](https://www.gradio.app/guides/state-in-blocks) · [Gradio-Lite](https://huggingface.co/blog/gradio-lite) · [Hugging Face Static Spaces](https://huggingface.co/docs/hub/spaces-sdks-static).

@@ -215,22 +215,22 @@ def editing():
     return show([])
 
 
-def previous_step(session):
+def previousStep(session):
     steps, index = session
     return show(steps, index - 1)
 
 
-def next_step(session):
+def nextStep (session):
     steps, index = session
     return show(steps, index + 1)
 
 
-def show_result(session):
+def showResult(session):
     steps = session[0]
     return show(steps, len(steps) - 1)
 
 
-def build_app():
+def buildApp():
     example_steps = build_steps(EXAMPLE)
     with gr.Blocks(title="Shuttle Stop Crowd Ranking", analytics_enabled=False) as app:
         # Gradio gives each browser session its own copy of the trace and cursor.
@@ -258,15 +258,15 @@ def build_app():
         # Process input edits, restarts and navigation in the order they arrive.
         entry.change(editing, None, outputs, show_progress="hidden", concurrency_id="simulation")
         start_button.click(start, entry, outputs, show_progress="hidden", concurrency_id="simulation")
-        back.click(previous_step, session, outputs, show_progress="hidden", concurrency_id="simulation")
-        forward.click(next_step, session, outputs, show_progress="hidden", concurrency_id="simulation")
-        finish.click(show_result, session, outputs, show_progress="hidden", concurrency_id="simulation")
+        back.click(previousStep, session, outputs, show_progress="hidden", concurrency_id="simulation")
+        forward.click(nextStep , session, outputs, show_progress="hidden", concurrency_id="simulation")
+        finish.click(showResult, session, outputs, show_progress="hidden", concurrency_id="simulation")
     return app
 
 
 if __name__ == "__main__":
     theme = gr.themes.Base(primary_hue="teal", neutral_hue="slate", font=["Inter", "system-ui", "sans-serif"])
-    build_app().launch(theme=theme, css_paths=Path(__file__).with_name("style.css"), footer_links=[])
+    buildApp().launch(theme=theme, css_paths=Path(__file__).with_name("style.css"), footer_links=[])
 </gradio-file>
     <gradio-file name="ranking.py">
 """Read crowd estimates and rank shuttle stops with Merge Sort."""
@@ -534,9 +534,9 @@ def message(title, detail, error=False):
     return f'&lt;article class="{style}" role="{role}"&gt;&lt;h2&gt;{escape(title)}&lt;/h2&gt;&lt;p&gt;{escape(detail)}&lt;/p&gt;&lt;/article&gt;'
 </gradio-file>
     <gradio-file name="browser.py" entrypoint>
-from app import build_app
+from app import buildApp
 
-build_app().launch()
+buildApp().launch()
     </gradio-file>
   </gradio-lite>
 </body>

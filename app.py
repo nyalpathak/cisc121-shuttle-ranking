@@ -1,6 +1,5 @@
 """Gradio entry point for the campus shuttle Merge Sort simulator."""
 
-from functools import partial
 from pathlib import Path
 
 import gradio as gr
@@ -10,15 +9,23 @@ from ranking import EXAMPLE, MAX_COUNT, MAX_STOPS, build_steps
 
 
 def show(steps, index=0, notice=""):
-    """Keep the saved position, picture, and navigation buttons in sync."""
-    active = bool(steps)
-    last = active and index == len(steps) - 1
-    picture = render_step(steps, index) if active else notice
+    """Show one step and enable the buttons that can move away from it."""
+    if steps:
+        last = len(steps) - 1
+        index = max(0, min(index, last))
+        picture = render_step(steps, index)
+        can_go_back = index > 0
+        can_go_forward = index < last
+    else:
+        index = 0
+        picture = notice or message("Ready for a new run", "Choose Start simulation to rank the edited stop counts.")
+        can_go_back = False
+        can_go_forward = False
     return (
         (steps, index), picture,
-        gr.Button(interactive=active and index > 0),
-        gr.Button(interactive=active and not last),
-        gr.Button(interactive=active and not last),
+        gr.Button(interactive=can_go_back),
+        gr.Button(interactive=can_go_forward),
+        gr.Button(interactive=can_go_forward),
     )
 
 
@@ -31,20 +38,23 @@ def start(text):
 
 
 def editing():
-    return show([], notice=message("Ready for a new run", "Choose Start simulation to rank the edited stop counts."))
+    # The textbox has changed. Its previous ranking no longer describes the input.
+    return show([])
 
 
-def navigate(session, action):
+def previous_step(session):
     steps, index = session
-    if not steps:
-        return editing()
-    if action == "back":
-        index = max(0, index - 1)
-    elif action == "next":
-        index = min(len(steps) - 1, index + 1)
-    else:
-        index = len(steps) - 1
-    return show(steps, index)
+    return show(steps, index - 1)
+
+
+def next_step(session):
+    steps, index = session
+    return show(steps, index + 1)
+
+
+def show_result(session):
+    steps = session[0]
+    return show(steps, len(steps) - 1)
 
 
 def build_app():
@@ -73,12 +83,11 @@ def build_app():
 
         outputs = [session, picture, back, forward, finish]
         # Process input edits, restarts and navigation in the order they arrive.
-        events = {"outputs": outputs, "show_progress": "hidden", "concurrency_id": "simulation"}
-        entry.change(editing, **events)
-        start_button.click(start, inputs=entry, **events)
-        back.click(partial(navigate, action="back"), inputs=session, **events)
-        forward.click(partial(navigate, action="next"), inputs=session, **events)
-        finish.click(partial(navigate, action="result"), inputs=session, **events)
+        entry.change(editing, None, outputs, show_progress="hidden", concurrency_id="simulation")
+        start_button.click(start, entry, outputs, show_progress="hidden", concurrency_id="simulation")
+        back.click(previous_step, session, outputs, show_progress="hidden", concurrency_id="simulation")
+        forward.click(next_step, session, outputs, show_progress="hidden", concurrency_id="simulation")
+        finish.click(show_result, session, outputs, show_progress="hidden", concurrency_id="simulation")
     return app
 
 

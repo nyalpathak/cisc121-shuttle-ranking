@@ -41,13 +41,13 @@ With the original counts, Stauffer Library ranked third with 18 people. Changing
 - **Decomposition.** Read each stop and count, validate the rows, split the list into halves, rank each half, and merge the halves. Use the first stop in the completed ranking to make the dispatch decision.
 - **Pattern recognition.** Every merge asks the same question. Which of the two front stops has more people waiting? Move that stop to the output. Once a group runs out, its neighbour's remaining stops are already in order.
 - **Abstraction.** A stop needs only a name and a whole-number count. The screen shows the two groups and the growing output. Labelled highlights identify the two candidates and the stop just placed. Memory addresses and recursive call frames would add detail without helping the dispatch decision.
-- **Algorithm design.** The Gradio textbox supplies a string. Validation converts it into a list of stop records. Merge Sort records the actual splits and merges. Back and Next step replay these snapshots, and Show result opens the ranked list and recommendation.
+- **Algorithm design.** The Gradio textbox supplies a string. Validation converts it into a list of dictionaries. Merge Sort saves a step each time it splits a group, reaches one stop, chooses a stop, or appends the rest of a group. Back and Next step display those saved steps. Show result opens the ranked list and recommendation.
 
 ![Flowchart. Enter rows, correct any errors, split into singles, merge ranked halves, replay the steps, and show the dispatch decision.](docs/flowchart.png)
 
 ## Data and input rules
 
-Each nonblank line is a stop name, one comma, and the number waiting. The app stores the name as a Python string and the count as an integer in a `Stop` record. A Python list preserves entry order. Start with any ordering.
+Each nonblank line is a stop name, one comma, and the number waiting. For example, `West Campus, 32` becomes the Python dictionary `{"name": "West Campus", "count": 32}`. The name is a string and the count is an integer. The app puts each dictionary into a list in entry order.
 
 - Use 1–12 distinct stops, counts from 0 to 999 inclusive, and names of 1–40 characters. The 12-stop limit keeps the replay manageable. A submission can contain up to 2,000 characters.
 - Blank lines are skipped. Extra spaces and capitalization differences are ignored when checking for duplicate names. A name can contain spaces but the single comma on each row is the field separator.
@@ -56,13 +56,13 @@ Each nonblank line is a stop name, one comma, and the number waiting. The app st
 
 ## How the implementation works
 
-1. `parse_stops` checks each row and reports its original line number if it needs correction.
-2. `merge_sort` finds the middle with `len(stops) // 2`. It returns when a group has at most one stop. Otherwise, it calls itself on both halves.
-3. `merge` walks the two ranked halves with separate indices. The comparison `left_stop.count >= right_stop.count` picks the busier front stop and gives the left stop priority on a tie. Only the index for the chosen stop advances.
-4. Each split, single-stop group, pick, and tail creates a `Step`. The merge copies its growing output so later choices cannot change an earlier screen. Gradio saves the steps and current position for each session.
-5. `dispatch_decision` reads the completed ranking. `display.py` draws the saved steps and final counts. Going back reuses the saved step.
+1. In `ranking.py`, `parse_stops` checks each row, converts its count to an integer, and appends the stop to a list. An invalid row produces a message with the original line number.
+2. `merge_sort` returns when a group has at most one stop. This is the recursion's base case. For a larger group, it calculates `middle = len(stops) // 2` and calls itself on the slices `stops[:middle]` and `stops[middle:]`.
+3. `merge` uses a `while` loop and one index per half. The condition `left_stop["count"] >= right_stop["count"]` picks the busier stop. On a 32-to-32 tie, it takes the left stop. It advances only the chosen side's index. Once one side is empty, it appends the remaining stops.
+4. The replay is another list. Each step is a dictionary containing its kind, its explanation, and the lists needed for that screen. For a pick, `merged.copy()` saves the output at that moment. Without the copy, pressing Back could show stops added by a later pick.
+5. `dispatch_decision` reads the first ranked stop to make the recommendation. `display.py` draws the steps. In `app.py`, each Gradio button calls an ordinary Python function. For example, Next step adds one to the current index and displays that saved step.
 
-The sort makes at most O(n log n) crowd comparisons. Each level merges a total of n stops, and each split roughly halves the group size. Saving the remaining groups and partial output for every pick adds overhead. The replay can store O(n²) record references across its snapshots.
+The sort makes O(n log n) crowd comparisons. Each level merges a total of at most n stops, and each split roughly halves the group size. Saving the replay costs extra time and memory. Across all the saved steps, the lists can hold O(n²) references to stop dictionaries.
 
 ## Steps to Run
 
@@ -85,11 +85,12 @@ In the same activated environment, run the following from the project folder.
 python -m unittest discover -s tests -v
 ```
 
-All **17 test methods passed** on Python 3.12.14. The table gives expected and observed outcomes. A separate browser run exercised the real Gradio controls and produced the screenshots.
+All **18 test functions passed** on Python 3.12.14. The table gives expected and observed outcomes. The browser checks also exercised the Gradio controls shown in the screenshots.
 
 | Case | Expected | Observed |
 | --- | --- | --- |
 | Four sample stops, two tied across halves | West and Athletics first, in entry order | West Campus 32, Athletics Centre 32, Stauffer Library 18, Union Street 7. Dispatch to West Campus. |
+| Change just Stauffer Library from 18 to 40 | Stauffer moves to first and the two stops at 32 keep their order | Stauffer Library 40, West Campus 32, Athletics Centre 32, Union Street 7. The edited run finished in 16 steps. |
 | One stop, Pier 9 | Return that stop | Three screens showed the input, single stop, and result. Pier gets the shuttle. |
 | Gate 0, Pier 0 | Preserve order and keep shuttle available | Gate then Pier, both 0. Standby message shown. |
 | Five equal counts, names Z/B/M/C/A | Keep all five in entry order | Z, B, M, C, A. |
@@ -118,6 +119,6 @@ The Space uses the free Static SDK with Gradio-Lite 5.45.0. It runs the same Pyt
 
 **Student:** Nyal, CISC 121, Queen’s University.
 
-**AI assistance:** OpenAI ChatGPT (Codex) helped select the scenario and tie rule, helped correct and debug my original Python and Gradio code and drafted the flowchart.
+**AI assistance.** OpenAI ChatGPT (Codex) helped choose the scenario and tie rule, draft and revise the Python and Gradio code, prepare the tests, README and flowchart, and package the app for the Space. For this revision it rewrote the stop and replay data using dictionaries and checked the updated code. I tested the live app by changing Stauffer Library from 18 to 40 and checking that it moved into first place.
 
-**Sources:** The course's *CISC 121 Project Guidelines*, problem 2, and the supplied *Project README template* guided the scope and structure. The interface and browser deployment use Gradio, Gradio-Lite and Hugging Face Static Spaces. [Gradio session state](https://www.gradio.app/guides/state-in-blocks) · [Gradio-Lite](https://huggingface.co/blog/gradio-lite) · [Hugging Face Static Spaces](https://huggingface.co/docs/hub/spaces-sdks-static).
+**Sources.** The course's *CISC 121 Project Guidelines*, problem 2, and the supplied *Project README template* guided the scope and structure. The CISC 121 *Makeup Quiz Review* covers dictionaries on slide 38, functions and recursion on slides 40–42, and the two-index Merge Sort on slides 67–68. The shuttle problem uses descending order. The interface and browser deployment use Gradio, Gradio-Lite and Hugging Face Static Spaces. [Gradio session state](https://www.gradio.app/guides/state-in-blocks) · [Gradio-Lite](https://huggingface.co/blog/gradio-lite) · [Hugging Face Static Spaces](https://huggingface.co/docs/hub/spaces-sdks-static).

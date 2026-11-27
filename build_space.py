@@ -42,19 +42,15 @@ HEAD = """<!doctype html>
 
     // Wrap the one worker this page starts, then restore the normal constructor.
     const BrowserWorker = window.Worker;
-    window.Worker = class extends BrowserWorker {
-      constructor(url, options) {
-        const startup =
-          "importScripts(" + JSON.stringify(String(url)) + ");" +
-          "(" + pinPackages.toString() + ")(" + JSON.stringify(wheels) + ");";
-        const workerUrl = URL.createObjectURL(new Blob([startup], {type: "text/javascript"}));
-        try {
-          super(workerUrl, options);
-        } finally {
-          window.Worker = BrowserWorker;
-        }
-      }
-    };
+    function startGradioWorker(url, options) {
+      window.Worker = BrowserWorker;
+      const startup =
+        "importScripts(" + JSON.stringify(String(url)) + ");" +
+        "(" + pinPackages.toString() + ")(" + JSON.stringify(wheels) + ");";
+      const workerUrl = URL.createObjectURL(new Blob([startup], {type: "text/javascript"}));
+      return new BrowserWorker(workerUrl, options);
+    }
+    window.Worker = startGradioWorker;
   </script>
   <script type="module" crossorigin src="https://cdn.jsdelivr.net/npm/@gradio/lite@5.45.0/dist/lite.js"></script>
   <style>
